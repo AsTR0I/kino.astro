@@ -4,16 +4,18 @@
 
 <form action="/admin/movies/add" method="POST">
     <p>Name</p>
-    <div>
-        <input type="text" name="name">
-    </div>
-    <?php if($session->has('name')) { ?>
+    
+    <?php if ($session->has('name')) { ?>
         <ul>
             <?php foreach ($session->getFlash('name') as $error) { ?>
                 <li style="color:red;"><?php echo $error ?></li>
             <?php } ?>
         </ul>
     <?php } ?>
+
+    <div>
+        <input type="text" name="name">
+    </div>
     
     <div>
         <button>Add</button>

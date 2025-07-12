@@ -1,9 +1,9 @@
-<?php 
+<?php
 
 namespace App\Kernel\Session;
 
-class Session {
-
+class Session implements SessionInterface
+{
     public function __construct()
     {
         session_start();
@@ -41,5 +41,4 @@ class Session {
     {
         session_destroy();
     }
-
 }
