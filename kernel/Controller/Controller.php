@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Kernel\Controller;
 
 use App\Kernel\Auth\AuthInterface;
 use App\Kernel\Database\DatabaseInterface;
@@ -8,6 +8,7 @@ use App\Kernel\Http\RedirectInterface;
 use App\Kernel\Http\RequestInterface;
 use App\Kernel\Session\SessionInterface;
 use App\Kernel\Storage\StorageInterface;
+use App\Kernel\View\View;
 use App\Kernel\View\ViewInterface;
 
 abstract class Controller
@@ -26,24 +27,14 @@ abstract class Controller
 
     private StorageInterface $storage;
 
-    public function view(string $name): void
+    public function view(string $name, array $data = [], string $title = ''): void
     {
-        $this->view->page($name);
+        $this->view->page($name, $data, $title);
     }
 
-    public function setView(ViewInterface $view): void
+    public function setView(View $view): void
     {
         $this->view = $view;
-    }
-
-    public function redirect(string $url): void
-    {
-        $this->redirect->to($url);
-    }
-
-    public function setRedirect(RedirectInterface $redirect): void
-    {
-        $this->redirect = $redirect;
     }
 
     public function request(): RequestInterface
@@ -54,6 +45,16 @@ abstract class Controller
     public function setRequest(RequestInterface $request): void
     {
         $this->request = $request;
+    }
+
+    public function setRedirect(RedirectInterface $redirect): void
+    {
+        $this->redirect = $redirect;
+    }
+
+    public function redirect(string $url): void
+    {
+        $this->redirect->to($url);
     }
 
     public function session(): SessionInterface
@@ -71,28 +72,28 @@ abstract class Controller
         return $this->database;
     }
 
-    public function setDatabase(DatabaseInterface $database)
+    public function setDatabase(DatabaseInterface $database): void
     {
         $this->database = $database;
     }
-    
+
     public function auth(): AuthInterface
     {
         return $this->auth;
     }
 
-    public function setAuth(AuthInterface $auth)
+    public function setAuth(AuthInterface $auth): void
     {
         $this->auth = $auth;
     }
 
-    public function setStorage(StorageInterface $storage)
-    {
-        $this->storage = $storage;
-    }
-
-    public function storage()
+    public function storage(): StorageInterface
     {
         return $this->storage;
+    }
+
+    public function setStorage(StorageInterface $storage): void
+    {
+        $this->storage = $storage;
     }
 }

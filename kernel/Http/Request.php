@@ -16,17 +16,12 @@ class Request implements RequestInterface
         public readonly array $server,
         public readonly array $files,
         public readonly array $cookies,
-    ) {}
+    ) {
+    }
 
     public static function createFromGlobals(): static
     {
-        return new static(
-            $_GET,
-            $_POST,
-            $_SERVER,
-            $_FILES,
-            $_COOKIE
-        );
+        return new static($_GET, $_POST, $_SERVER, $_FILES, $_COOKIE);
     }
 
     public function uri(): string
@@ -39,7 +34,7 @@ class Request implements RequestInterface
         return $this->server['REQUEST_METHOD'];
     }
 
-    public function input(string $key, $default = null)
+    public function input(string $key, $default = null): mixed
     {
         return $this->post[$key] ?? $this->get[$key] ?? $default;
     }
@@ -49,6 +44,7 @@ class Request implements RequestInterface
         if (! isset($this->files[$key])) {
             return null;
         }
+
         return new UploadedFile(
             $this->files[$key]['name'],
             $this->files[$key]['type'],
@@ -58,7 +54,7 @@ class Request implements RequestInterface
         );
     }
 
-    public function setValidator(ValidatorInterface $validator)
+    public function setValidator(ValidatorInterface $validator): void
     {
         $this->validator = $validator;
     }
@@ -78,5 +74,4 @@ class Request implements RequestInterface
     {
         return $this->validator->errors();
     }
-
 }

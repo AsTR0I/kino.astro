@@ -3,9 +3,11 @@
 namespace App\Kernel\Router;
 
 use App\Kernel\Auth\AuthInterface;
+use App\Kernel\Controller\Controller;
 use App\Kernel\Database\DatabaseInterface;
 use App\Kernel\Http\RedirectInterface;
 use App\Kernel\Http\RequestInterface;
+use App\Kernel\Middleware\AbstractMiddleware;
 use App\Kernel\Session\SessionInterface;
 use App\Kernel\Storage\StorageInterface;
 use App\Kernel\View\ViewInterface;
@@ -24,30 +26,33 @@ class Router implements RouterInterface
         private SessionInterface $session,
         private DatabaseInterface $database,
         private AuthInterface $auth,
-        private StorageInterface $storage,
+        private StorageInterface $storage
     ) {
         $this->initRoutes();
     }
 
-    public function dispatch(string $uri, string $method)
+    public function dispatch(string $uri, string $method): void
     {
         $route = $this->findRoute($uri, $method);
 
         if (! $route) {
             $this->notFound();
-            exit();
         }
 
         if ($route->hasMiddlewares()) {
             foreach ($route->getMiddlewares() as $middleware) {
+                /** @var AbstractMiddleware $middleware */
                 $middleware = new $middleware($this->request, $this->auth, $this->redirect);
+
                 $middleware->handle();
             }
         }
 
         if (is_array($route->getAction())) {
             [$controller, $action] = $route->getAction();
-            $controller = new $controller;
+
+            /** @var Controller $controller */
+            $controller = new $controller();
 
             call_user_func([$controller, 'setView'], $this->view);
             call_user_func([$controller, 'setRequest'], $this->request);
@@ -63,18 +68,10 @@ class Router implements RouterInterface
         }
     }
 
-    private function initRoutes()
+    private function notFound(): void
     {
-        $routes = $this->getRoutes();
-
-        foreach ($routes as $route) {
-            $this->routes[$route->getMethod()][$route->getUri()] = $route;
-        }
-    }
-
-    private function getRoutes(): array
-    {
-        return require_once APP_PATH.'/config/routes.php';
+        echo '404 | Not Found';
+        exit;
     }
 
     private function findRoute(string $uri, string $method): Route|false
@@ -86,8 +83,20 @@ class Router implements RouterInterface
         return $this->routes[$method][$uri];
     }
 
-    private function notFound()
+    private function initRoutes(): void
     {
-        echo '404 | Not Found';
+        $routes = $this->getRoutes();
+
+        foreach ($routes as $route) {
+            $this->routes[$route->getMethod()][$route->getUri()] = $route;
+        }
+    }
+
+    /**
+     * @return Route[]
+     */
+    private function getRoutes(): array
+    {
+        return require_once APP_PATH.'/config/routes.php';
     }
 }

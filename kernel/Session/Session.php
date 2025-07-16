@@ -9,7 +9,7 @@ class Session implements SessionInterface
         session_start();
     }
 
-    public function set(string $key, $value)
+    public function set(string $key, $value): void
     {
         $_SESSION[$key] = $value;
     }
@@ -32,12 +32,12 @@ class Session implements SessionInterface
         return isset($_SESSION[$key]);
     }
 
-    public function remove(string $key)
+    public function remove(string $key): void
     {
         unset($_SESSION[$key]);
     }
 
-    public function destroy()
+    public function destroy(): void
     {
         session_destroy();
     }

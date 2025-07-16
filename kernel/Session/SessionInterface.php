@@ -4,7 +4,7 @@ namespace App\Kernel\Session;
 
 interface SessionInterface
 {
-    public function set(string $key, $value);
+    public function set(string $key, $value): void;
 
     public function get(string $key, $default = null);
 
@@ -12,7 +12,7 @@ interface SessionInterface
 
     public function has(string $key): bool;
 
-    public function remove(string $key);
+    public function remove(string $key): void;
 
-    public function destroy();
+    public function destroy(): void;
 }

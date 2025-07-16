@@ -13,13 +13,13 @@ interface RequestInterface
 
     public function method(): string;
 
-    public function input(string $key, $default = null);
+    public function input(string $key, $default = null): mixed;
 
-    public function setValidator(ValidatorInterface $validator);
+    public function file(string $key): ?UploadedFileInterface;
+
+    public function setValidator(ValidatorInterface $validator): void;
 
     public function validate(array $rules): bool;
 
     public function errors(): array;
-
-    public function file(string $key): ?UploadedFileInterface;
 }

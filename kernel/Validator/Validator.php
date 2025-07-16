@@ -38,30 +38,34 @@ class Validator implements ValidatorInterface
         return $this->errors;
     }
 
-    private function validateRule(string $key, string $ruleName, ?string $ruleValue = null): string|false
+    private function validateRule(string $key, string $ruleName, string $ruleValue = null): string|false
     {
-
         $value = $this->data[$key];
 
         switch ($ruleName) {
             case 'required':
                 if (empty($value)) {
-                    return 'Field is requred';
+                    return "Field $key is required";
                 }
                 break;
             case 'min':
                 if (strlen($value) < $ruleValue) {
-                    return "Field must be at least {$ruleValue} characters long";
+                    return "Field $key must be at least $ruleValue characters long";
                 }
                 break;
             case 'max':
                 if (strlen($value) > $ruleValue) {
-                    return "Field must be at most {$ruleValue} characters long";
+                    return "Field $key must be at most $ruleValue characters long";
                 }
                 break;
             case 'email':
                 if (! filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                    return 'Field must be a valid email address';
+                    return "Field $key must be a valid email address";
+                }
+                break;
+            case 'confirmed':
+                if ($value !== $this->data["{$key}_confirmation"]) {
+                    return "Field $key must be confirmed";
                 }
                 break;
         }
