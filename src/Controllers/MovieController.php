@@ -11,6 +11,9 @@ class MovieController extends Controller
 
     public function store()
     {
+        dd($this->storage()->url('test/2e9795544ef79ab79037d3f386e8e59d.png'));
+        $file = $this->request()->file("image");
+        dd($file->move('test'));
         $validation = $this->request()->validate([
             'name' => ['required', 'min:4', 'max:50'],
         ]);
@@ -28,4 +31,5 @@ class MovieController extends Controller
         
         dd("Moved added successfully with id: $id");
     }
+
 }

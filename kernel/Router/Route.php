@@ -7,17 +7,19 @@ class Route
     public function __construct(
         private string $uri,
         private $action,
-        private string $method
+        private array $middlewares = [],
+        private string $method,
+        
     ) {}
 
-    public static function get(string $uri, $action): static
+    public static function get(string $uri, $action, array $middlewares = []): static
     {
-        return new static($uri,  $action, method: 'GET');
+        return new static($uri,  $action, $middlewares, 'GET', );
     }
 
-    public static function post(string $uri, $action): static
+    public static function post(string $uri, $action, array $middlewares = []): static
     {
-        return new static($uri,  $action, method: 'POST');
+        return new static($uri,  $action, $middlewares, 'POST', );
     }
 
     public function getUri(): string
@@ -33,5 +35,15 @@ class Route
     public function getAction()
     {
         return $this->action;
+    }
+
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
+    }
+
+    public function hasMiddlewares(): bool
+    {
+        return !empty($this->middlewares);
     }
 }
